@@ -1,0 +1,1464 @@
+openapi: 3.0.3
+info:
+  description: This is the UniversalAPI to access all the Jina embedding models
+  title: The Jina Embedding Serving API
+  version: 0.0.86
+  x-konfig-ignore:
+    object-with-no-properties: true
+  x-konfig-uses-multipart-form-data: true
+servers:
+- url: https://api.jina.ai
+tags:
+- name: bulk-embeddings
+- name: embeddings
+- name: rerank
+- name: multi-embeddings
+- name: health
+paths:
+  /v1/embeddings:
+    post:
+      description: Create embedding representations of the given input texts.
+      operationId: Embeddings_createRepresentation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmbeddingsCreateRepresentationRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelEmbeddingOutput'
+          description: Create embeddings
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+          x-do-not-generate: true
+      security:
+      - HTTPBearer: []
+      summary: Create Embedding
+      tags:
+      - embeddings
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-post--v1-embeddings
+      x-content-type: application/json
+      x-accepts: application/json
+  /v1/bulk-embeddings:
+    post:
+      description: Upload a file and get embeddings for each row
+      operationId: Bulkembeddings_uploadFileAndGetEmbeddings
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Body_start_bulk_embedding_v1_bulk_embeddings_post'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkEmbeddingJobResponse'
+          description: Start a bulk embedding job
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+          x-do-not-generate: true
+      security:
+      - HTTPBearer: []
+      summary: Start Bulk Embedding
+      tags:
+      - bulk-embeddings
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-post--v1-bulk-embeddings
+      x-content-type: multipart/form-data
+      x-accepts: application/json
+  /v1/bulk-embeddings/{job_id}:
+    get:
+      operationId: Bulkembeddings_getJob
+      parameters:
+      - explode: false
+        in: path
+        name: job_id
+        required: true
+        schema:
+          title: Job Id
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkEmbeddingJobResponse'
+          description: Get information about a bulk embedding job
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+          x-do-not-generate: true
+      summary: Retrieve Job
+      tags:
+      - bulk-embeddings
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-get--v1-bulk-embeddings-job_id
+      x-accepts: application/json
+  /v1/bulk-embeddings/{job_id}/download-result:
+    post:
+      operationId: Bulkembeddings_downloadResultPost
+      parameters:
+      - explode: false
+        in: path
+        name: job_id
+        required: true
+        schema:
+          title: Job Id
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DownloadResultResponse'
+          description: Download the result of a bulk embedding job
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+          x-do-not-generate: true
+      summary: Download Result
+      tags:
+      - bulk-embeddings
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-post--v1-bulk-embeddings-job_id-download-result
+      x-accepts: application/json
+  /v1/rerank:
+    post:
+      description: Rank pairs.
+      operationId: Rerank_pairRanking
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TextRankInput'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RankingOutput'
+          description: Rank output
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+          x-do-not-generate: true
+      security:
+      - HTTPBearer: []
+      summary: Rank
+      tags:
+      - rerank
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-post--v1-rerank
+      x-content-type: application/json
+      x-accepts: application/json
+  /v1/multi-embeddings:
+    post:
+      description: Create embedding representations of the given input texts.
+      operationId: Multiembeddings_generateEmbeddings
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/api_schemas__multi_embeddings__TextEmbeddingInput'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ColbertModelEmbeddingsOutput'
+          description: Create embeddings
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+          x-do-not-generate: true
+      security:
+      - HTTPBearer: []
+      summary: Create Multi Embeddings
+      tags:
+      - multi-embeddings
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-post--v1-multi-embeddings
+      x-content-type: application/json
+      x-accepts: application/json
+  /:
+    get:
+      description: |-
+        Get the health of this Gateway service.
+        .. # noqa: DAR201
+      operationId: Health_checkStatus
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthModel'
+          description: Successful Response
+      summary: Get the health of Universal API service
+      tags:
+      - health
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-get--
+      x-accepts: application/json
+components:
+  schemas:
+    Body_start_bulk_embedding_v1_bulk_embeddings_post:
+      properties:
+        file:
+          format: binary
+          title: File
+          type: string
+        email:
+          format: email
+          title: Email
+          type: string
+        model:
+          title: Model
+          type: string
+      required:
+      - file
+      - model
+      title: Body_start_bulk_embedding_v1_bulk_embeddings_post
+      type: object
+    BulkEmbeddingJobResponse:
+      example:
+        id: "000000000000000000000000"
+        model_name: model_1
+        status: in-progress
+        file_name: input.csv
+        used_token_count: 1000
+      properties:
+        user_id:
+          description: The user ID of the user who created the job
+          title: User Id
+          type: string
+        model_name:
+          description: The name of the model to use
+          example: model_1
+          title: Model Name
+          type: string
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-BulkEmbeddingJobResponse-properties-model_name
+        model_package_arn:
+          description: The model package ARN
+          title: Model Package Arn
+          type: string
+        status:
+          $ref: '#/components/schemas/BulkEmbeddingJobStatus'
+        file_name:
+          description: The name of the input file
+          example: input.csv
+          title: File Name
+          type: string
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-BulkEmbeddingJobResponse-properties-file_name
+        user_email:
+          description: The email of the user who created the job
+          format: email
+          title: User Email
+          type: string
+        created_at:
+          description: Time of creation of the job.
+          format: date-time
+          nullable: false
+          title: Created At
+          type: string
+        completed_at:
+          description: Time of completion of the job.
+          format: date-time
+          title: Completed At
+          type: string
+        error:
+          description: The error message of the job
+          title: Error
+          type: string
+        _id:
+          description: The ID of the job
+          title: ' Id'
+          type: string
+        used_token_count:
+          description: The number of tokens used for the job
+          example: 1000
+          title: Used Token Count
+          type: integer
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-BulkEmbeddingJobResponse-properties-used_token_count
+      required:
+      - _id
+      - file_name
+      - model_name
+      - status
+      - user_id
+      title: BulkEmbeddingJobResponse
+      type: object
+      x-konfig-properties:
+        status:
+          description: The status of the job
+      x-konfig-original-example:
+        id: "000000000000000000000000"
+        model_name: model_1
+        status: in-progress
+        file_name: input.csv
+        used_token_count: 1000
+      x-konfig-generated-schema: konfig-generated-schema-components-schemas-BulkEmbeddingJobResponse
+      x-konfig-is-used-in-successful-response: true
+    BulkEmbeddingJobStatus:
+      description: An enumeration.
+      enum:
+      - waiting
+      - in-progress
+      - failed
+      - completed
+      example: in-progress
+      title: BulkEmbeddingJobStatus
+      type: string
+      x-konfig-generated-schema: konfig-generated-schema-components-schemas-BulkEmbeddingJobStatus
+    ColbertModelEmbeddingsOutput:
+      description: Output of the embedding service
+      example:
+        data:
+        - index: 0
+          embeddings:
+          - - 0.1
+            - 0.2
+            - 0.3
+          - - 0.4
+            - 0.5
+            - 0.6
+          object: embeddings
+        - index: 1
+          embeddings:
+          - - 0.6
+            - 0.5
+            - 0.4
+          - - 0.3
+            - 0.2
+            - 0.1
+          object: embeddings
+        usage:
+          total_tokens: 15
+          prompt_tokens: 15
+      properties:
+        model:
+          description: "The identifier of the model.\n\nAvailable models and corresponding\
+            \ param size and dimension:\n- `jina-embedding-t-en-v1`,\t14m,\t312\n\
+            - `jina-embedding-s-en-v1`,\t35m,\t512 (default)\n- `jina-embedding-b-en-v1`,\t\
+            110m,\t768\n- `jina-embedding-l-en-v1`,\t330,\t1024\n\nFor more information,\
+            \ please checkout our [technical blog](https://arxiv.org/abs/2307.11224).\n"
+          title: Model
+          type: string
+        object:
+          default: list
+          example: list
+          title: Object
+          type: string
+          x-konfig-original-example: list
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-ColbertModelEmbeddingsOutput-properties-object
+        data:
+          description: A list of Embedding Objects returned by the embedding service
+          items: {}
+          title: Data
+          type: array
+        usage:
+          $ref: '#/components/schemas/api_schemas__embedding__Usage'
+      required:
+      - data
+      - model
+      - usage
+      title: ColbertModelEmbeddingsOutput
+      type: object
+      x-konfig-properties:
+        usage:
+          title: Usage
+          description: Total usage of the request. Sums up the usage from each individual
+            input
+      x-konfig-original-example:
+        data:
+        - index: 0
+          embeddings:
+          - - 0.1
+            - 0.2
+            - 0.3
+          - - 0.4
+            - 0.5
+            - 0.6
+          object: embeddings
+        - index: 1
+          embeddings:
+          - - 0.6
+            - 0.5
+            - 0.4
+          - - 0.3
+            - 0.2
+            - 0.1
+          object: embeddings
+        usage:
+          total_tokens: 15
+          prompt_tokens: 15
+      x-konfig-generated-schema: konfig-generated-schema-components-schemas-ColbertModelEmbeddingsOutput
+      x-konfig-is-used-in-successful-response: true
+    DownloadResultResponse:
+      example:
+        id: 000000000000000000000000X
+        download_url: https://example.com
+      properties:
+        id:
+          description: The ID of the job
+          example: 000000000000000000000000X
+          title: Id
+          type: string
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-DownloadResultResponse-properties-id
+        download_url:
+          description: The URL to download the result file
+          example: https://example.com
+          title: Download Url
+          type: string
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-DownloadResultResponse-properties-download_url
+      required:
+      - download_url
+      - id
+      title: DownloadResultResponse
+      type: object
+      x-konfig-original-example:
+        id: 000000000000000000000000X
+        download_url: https://example.com
+      x-konfig-generated-schema: konfig-generated-schema-components-schemas-DownloadResultResponse
+      x-konfig-is-used-in-successful-response: true
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          title: Detail
+          type: array
+      title: HTTPValidationError
+      type: object
+      x-konfig-is-used-in-non-successful-response: true
+      x-do-not-generate: true
+    HealthModel:
+      description: "Pydantic BaseModel for Jina health check, used as the response\
+        \ model in REST app."
+      properties: {}
+      title: HealthModel
+      type: object
+      x-konfig-is-used-in-successful-response: true
+    ImageDoc:
+      description: |-
+        BaseDoc is the base class for all Documents. This class should be subclassed
+        to create new Document types with a specific schema.
+
+        The schema of a Document is defined by the fields of the class.
+
+        Example:
+        ```python
+        from docarray import BaseDoc
+        from docarray.typing import NdArray, ImageUrl
+        import numpy as np
+
+
+        class MyDoc(BaseDoc):
+            embedding: NdArray[512]
+            image: ImageUrl
+
+
+        doc = MyDoc(embedding=np.zeros(512), image='https://example.com/image.jpg')
+        ```
+
+
+        BaseDoc is a subclass of [pydantic.BaseModel](https://docs.pydantic.dev/usage/models/) and can be used in a similar way.
+      properties:
+        id:
+          description: "The ID of the BaseDoc. This is useful for indexing in vector\
+            \ stores. If not set by user, it will automatically be assigned a random\
+            \ value"
+          example: c801ec96945569130923f081d9dd5e8e
+          title: Id
+          type: string
+          x-konfig-original-example: c801ec96945569130923f081d9dd5e8e
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-ImageDoc-properties-id
+        url:
+          description: URL of an image file
+          format: uri
+          maxLength: 65536
+          minLength: 1
+          title: Url
+          type: string
+        bytes:
+          description: Bytes representation of the Image.
+          format: binary
+          title: Bytes
+          type: string
+      title: ImageDoc
+      type: object
+    ImageEmbeddingInput:
+      description: The input to the API for text embedding. OpenAI compatible
+      example:
+        model: clip
+        input:
+        - bytes or URL
+      properties:
+        model:
+          description: "The identifier of the model.\n\nAvailable models and corresponding\
+            \ param size and dimension:\n- `jina-embedding-t-en-v1`,\t14m,\t312\n\
+            - `jina-embedding-s-en-v1`,\t35m,\t512 (default)\n- `jina-embedding-b-en-v1`,\t\
+            110m,\t768\n- `jina-embedding-l-en-v1`,\t330,\t1024\n\nFor more information,\
+            \ please checkout our [technical blog](https://arxiv.org/abs/2307.11224).\n"
+          example: clip
+          title: Model
+          type: string
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-ImageEmbeddingInput-properties-model
+        input: {}
+        encoding_format:
+          description: The format in which you want the embeddings to be returned.Possible
+            value are `float` and `base64`. Defaults to `float`
+          enum:
+          - float
+          - base64
+          title: Encoding Format
+          type: string
+      required:
+      - input
+      - model
+      title: ImageEmbeddingInput
+      type: object
+      x-konfig-original-example:
+        model: clip
+        input:
+        - bytes or URL
+      x-konfig-generated-schema: konfig-generated-schema-components-schemas-ImageEmbeddingInput
+    ModelEmbeddingOutput:
+      description: Output of the embedding service
+      example:
+        data:
+        - index: 0
+          embedding:
+          - 0.1
+          - 0.2
+          - 0.3
+          object: embedding
+        - index: 1
+          embedding:
+          - 0.3
+          - 0.2
+          - 0.1
+          object: embedding
+        usage:
+          total_tokens: 15
+          prompt_tokens: 15
+      properties:
+        model:
+          description: "The identifier of the model.\n\nAvailable models and corresponding\
+            \ param size and dimension:\n- `jina-embedding-t-en-v1`,\t14m,\t312\n\
+            - `jina-embedding-s-en-v1`,\t35m,\t512 (default)\n- `jina-embedding-b-en-v1`,\t\
+            110m,\t768\n- `jina-embedding-l-en-v1`,\t330,\t1024\n\nFor more information,\
+            \ please checkout our [technical blog](https://arxiv.org/abs/2307.11224).\n"
+          title: Model
+          type: string
+        object:
+          default: list
+          example: list
+          title: Object
+          type: string
+          x-konfig-original-example: list
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-ModelEmbeddingOutput-properties-object
+        data:
+          description: A list of Embedding Objects returned by the embedding service
+          items: {}
+          title: Data
+          type: array
+        usage:
+          $ref: '#/components/schemas/api_schemas__embedding__Usage'
+      required:
+      - data
+      - model
+      - usage
+      title: ModelEmbeddingOutput
+      type: object
+      x-konfig-properties:
+        usage:
+          title: Usage
+          description: Total usage of the request. Sums up the usage from each individual
+            input
+      x-konfig-original-example:
+        data:
+        - index: 0
+          embedding:
+          - 0.1
+          - 0.2
+          - 0.3
+          object: embedding
+        - index: 1
+          embedding:
+          - 0.3
+          - 0.2
+          - 0.1
+          object: embedding
+        usage:
+          total_tokens: 15
+          prompt_tokens: 15
+      x-konfig-generated-schema: konfig-generated-schema-components-schemas-ModelEmbeddingOutput
+      x-konfig-is-used-in-successful-response: true
+    RankingOutput:
+      description: Output of the embedding service
+      example:
+        results:
+        - index: 0
+          document:
+            text: Document to rank 1
+          relevance_score: 0.9
+        - index: 1
+          document:
+            text: Document to rank 2
+          relevance_score: 0.8
+        usage:
+          total_tokens: 15
+          prompt_tokens: 15
+      properties:
+        model:
+          description: "The identifier of the model.\n\nAvailable models and corresponding\
+            \ param size and dimension:\n- `jina-embedding-t-en-v1`,\t14m,\t312\n\
+            - `jina-embedding-s-en-v1`,\t35m,\t512 (default)\n- `jina-embedding-b-en-v1`,\t\
+            110m,\t768\n- `jina-embedding-l-en-v1`,\t330,\t1024\n\nFor more information,\
+            \ please checkout our [technical blog](https://arxiv.org/abs/2307.11224).\n"
+          title: Model
+          type: string
+        results:
+          description: An ordered list of ranked documents
+          items: {}
+          title: Results
+          type: array
+        usage:
+          $ref: '#/components/schemas/api_schemas__rank__Usage'
+      required:
+      - model
+      - results
+      - usage
+      title: RankingOutput
+      type: object
+      x-konfig-properties:
+        usage:
+          title: Usage
+          description: Total usage of the request.
+      x-konfig-original-example:
+        results:
+        - index: 0
+          document:
+            text: Document to rank 1
+          relevance_score: 0.9
+        - index: 1
+          document:
+            text: Document to rank 2
+          relevance_score: 0.8
+        usage:
+          total_tokens: 15
+          prompt_tokens: 15
+      x-konfig-generated-schema: konfig-generated-schema-components-schemas-RankingOutput
+      x-konfig-is-used-in-successful-response: true
+    TextRankInput:
+      description: The input to the API for text embedding. OpenAI compatible
+      example:
+        model: jina-reranker-v1-base-en
+        query: Search query
+        documents:
+        - Document to rank 1
+        - Document to rank 2
+      properties:
+        model:
+          description: "The identifier of the model.\n\nAvailable models and corresponding\
+            \ param size and dimension:\n- `jina-embedding-t-en-v1`,\t14m,\t312\n\
+            - `jina-embedding-s-en-v1`,\t35m,\t512 (default)\n- `jina-embedding-b-en-v1`,\t\
+            110m,\t768\n- `jina-embedding-l-en-v1`,\t330,\t1024\n\nFor more information,\
+            \ please checkout our [technical blog](https://arxiv.org/abs/2307.11224).\n"
+          example: jina-reranker-v1-base-en
+          title: Model
+          type: string
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-TextRankInput-properties-model
+        query: {}
+        documents:
+          items: {}
+          type: array
+        top_n:
+          description: "The number of most relevant documents or indices to return,\
+            \ defaults to the length of `documents`"
+          title: Top N
+          type: integer
+        return_documents:
+          default: true
+          description: "If false, returns results without the doc text - the api will\
+            \ return a list of {index, relevance score} where index is inferred from\
+            \ the list passed into the request. If true, returns results with the\
+            \ doc text passed in - the api will return an ordered list of {index,\
+            \ text, relevance score} where index + text refers to the list passed\
+            \ into the request. Defaults to true"
+          example: true
+          title: Return Documents
+          type: boolean
+          x-konfig-original-example: true
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-TextRankInput-properties-return_documents
+      required:
+      - documents
+      - model
+      - query
+      title: TextRankInput
+      type: object
+      x-konfig-original-example:
+        model: jina-reranker-v1-base-en
+        query: Search query
+        documents:
+        - Document to rank 1
+        - Document to rank 2
+      x-konfig-generated-schema: konfig-generated-schema-components-schemas-TextRankInput
+    ValidationError:
+      properties:
+        loc:
+          items: {}
+          title: Location
+          type: array
+        msg:
+          title: Message
+          type: string
+        type:
+          title: Error Type
+          type: string
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+      type: object
+    api_schemas__embedding__TextDoc:
+      description: Document containing a text field
+      properties:
+        id:
+          description: "The ID of the BaseDoc. This is useful for indexing in vector\
+            \ stores. If not set by user, it will automatically be assigned a random\
+            \ value"
+          example: c801ec96945569130923f081d9dd5e8e
+          title: Id
+          type: string
+          x-konfig-original-example: c801ec96945569130923f081d9dd5e8e
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-api_schemas__embedding__TextDoc-properties-id
+        text:
+          title: Text
+          type: string
+      required:
+      - text
+      title: TextDoc
+      type: object
+    api_schemas__embedding__TextEmbeddingInput:
+      description: The input to the API for text embedding. OpenAI compatible
+      example:
+        model: jina-embeddings-v2-base-en
+        input:
+        - "Hello, world!"
+      properties:
+        model:
+          description: "The identifier of the model.\n\nAvailable models and corresponding\
+            \ param size and dimension:\n- `jina-embedding-t-en-v1`,\t14m,\t312\n\
+            - `jina-embedding-s-en-v1`,\t35m,\t512 (default)\n- `jina-embedding-b-en-v1`,\t\
+            110m,\t768\n- `jina-embedding-l-en-v1`,\t330,\t1024\n\nFor more information,\
+            \ please checkout our [technical blog](https://arxiv.org/abs/2307.11224).\n"
+          example: jina-embeddings-v2-base-en
+          title: Model
+          type: string
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-api_schemas__embedding__TextEmbeddingInput-properties-model
+        input: {}
+        encoding_format:
+          description: The format in which you want the embeddings to be returned.Possible
+            value are `float` and `base64`. Defaults to `float`
+          enum:
+          - float
+          - base64
+          title: Encoding Format
+          type: string
+      required:
+      - input
+      - model
+      title: TextEmbeddingInput
+      type: object
+      x-konfig-original-example:
+        model: jina-embeddings-v2-base-en
+        input:
+        - "Hello, world!"
+      x-konfig-generated-schema: konfig-generated-schema-components-schemas-api_schemas__embedding__TextEmbeddingInput
+    api_schemas__embedding__Usage:
+      properties:
+        total_tokens:
+          description: The number of tokens used by all the texts in the input
+          example: 15
+          title: Total Tokens
+          type: integer
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-api_schemas__embedding__Usage-properties-total_tokens
+        prompt_tokens:
+          description: Same as total_tokens
+          example: 15
+          title: Prompt Tokens
+          type: integer
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-api_schemas__embedding__Usage-properties-prompt_tokens
+      required:
+      - prompt_tokens
+      - total_tokens
+      title: Usage
+      type: object
+    api_schemas__multi_embeddings__TextEmbeddingInput:
+      description: The input to the API for text embedding. OpenAI compatible
+      example:
+        model: jina-colbert-v1-en
+        input:
+        - "Hello, world!"
+      properties:
+        model:
+          description: "The identifier of the model.\n\nAvailable models and corresponding\
+            \ param size and dimension:\n- `jina-embedding-t-en-v1`,\t14m,\t312\n\
+            - `jina-embedding-s-en-v1`,\t35m,\t512 (default)\n- `jina-embedding-b-en-v1`,\t\
+            110m,\t768\n- `jina-embedding-l-en-v1`,\t330,\t1024\n\nFor more information,\
+            \ please checkout our [technical blog](https://arxiv.org/abs/2307.11224).\n"
+          example: jina-colbert-v1-en
+          title: Model
+          type: string
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-api_schemas__multi_embeddings__TextEmbeddingInput-properties-model
+        input: {}
+        input_type:
+          default: document
+          description: "Type of the embedding to compute, query or document"
+          enum:
+          - query
+          - document
+          example: document
+          title: Input Type
+          type: string
+          x-konfig-original-example: document
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-api_schemas__multi_embeddings__TextEmbeddingInput-properties-input_type
+        encoding_format:
+          description: The format in which you want the embeddings to be returned.Possible
+            value are `float` and `base64`. Defaults to `float`
+          enum:
+          - float
+          - base64
+          title: Encoding Format
+          type: string
+      required:
+      - input
+      - model
+      title: TextEmbeddingInput
+      type: object
+      x-konfig-original-example:
+        model: jina-colbert-v1-en
+        input:
+        - "Hello, world!"
+      x-konfig-generated-schema: konfig-generated-schema-components-schemas-api_schemas__multi_embeddings__TextEmbeddingInput
+    api_schemas__rank__TextDoc:
+      description: Document containing a text field
+      properties:
+        id:
+          description: "The ID of the BaseDoc. This is useful for indexing in vector\
+            \ stores. If not set by user, it will automatically be assigned a random\
+            \ value"
+          example: c801ec96945569130923f081d9dd5e8e
+          title: Id
+          type: string
+          x-konfig-original-example: c801ec96945569130923f081d9dd5e8e
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-api_schemas__rank__TextDoc-properties-id
+        text:
+          title: Text
+          type: string
+      required:
+      - text
+      title: TextDoc
+      type: object
+    api_schemas__rank__Usage:
+      example:
+        total_tokens: 15
+        prompt_tokens: 15
+      properties:
+        total_tokens:
+          description: The number of tokens used by all the texts in the input
+          example: 15
+          title: Total Tokens
+          type: integer
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-api_schemas__rank__Usage-properties-total_tokens
+        prompt_tokens:
+          description: Same as total_tokens
+          example: 15
+          title: Prompt Tokens
+          type: integer
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-api_schemas__rank__Usage-properties-prompt_tokens
+      required:
+      - prompt_tokens
+      - total_tokens
+      title: Usage
+      type: object
+      x-konfig-original-example:
+        total_tokens: 15
+        prompt_tokens: 15
+      x-konfig-generated-schema: konfig-generated-schema-components-schemas-api_schemas__rank__Usage
+    EmbeddingsCreateRepresentationRequest:
+      $ref: '#/components/schemas/TIEmbeddingInput'
+    konfig-generated-schema-components-schemas-BulkEmbeddingJobResponse:
+      example:
+        id: "000000000000000000000000"
+        model_name: model_1
+        status: in-progress
+        file_name: input.csv
+        used_token_count: 1000
+      properties:
+        id:
+          example: "000000000000000000000000"
+          type: string
+        model_name:
+          example: model_1
+          type: string
+        status:
+          example: in-progress
+          type: string
+        file_name:
+          example: input.csv
+          type: string
+        used_token_count:
+          example: 1000
+          type: number
+      type: object
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-BulkEmbeddingJobResponse-properties-model_name:
+      example: model_1
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-BulkEmbeddingJobResponse-properties-file_name:
+      example: input.csv
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-BulkEmbeddingJobResponse-properties-used_token_count:
+      example: 1000
+      type: number
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-BulkEmbeddingJobStatus:
+      example: in-progress
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-ColbertModelEmbeddingsOutput:
+      example:
+        data:
+        - index: 0
+          embeddings:
+          - - 0.1
+            - 0.2
+            - 0.3
+          - - 0.4
+            - 0.5
+            - 0.6
+          object: embeddings
+        - index: 1
+          embeddings:
+          - - 0.6
+            - 0.5
+            - 0.4
+          - - 0.3
+            - 0.2
+            - 0.1
+          object: embeddings
+        usage:
+          total_tokens: 15
+          prompt_tokens: 15
+      properties:
+        data:
+          items:
+            properties:
+              index:
+                example: 0
+                type: number
+              embeddings:
+                items:
+                  items:
+                    example: 0.1
+                    type: number
+                  type: array
+                type: array
+              object:
+                example: embeddings
+                type: string
+            type: object
+          type: array
+        usage:
+          properties:
+            total_tokens:
+              example: 15
+              type: number
+            prompt_tokens:
+              example: 15
+              type: number
+          type: object
+      type: object
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-ColbertModelEmbeddingsOutput-properties-object:
+      example: list
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-DownloadResultResponse:
+      example:
+        id: 000000000000000000000000X
+        download_url: https://example.com
+      properties:
+        id:
+          example: 000000000000000000000000X
+          type: string
+        download_url:
+          example: https://example.com
+          type: string
+      type: object
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-DownloadResultResponse-properties-id:
+      example: 000000000000000000000000X
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-DownloadResultResponse-properties-download_url:
+      example: https://example.com
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-ImageDoc-properties-id:
+      example: c801ec96945569130923f081d9dd5e8e
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-ImageEmbeddingInput:
+      example:
+        model: clip
+        input:
+        - bytes or URL
+      properties:
+        model:
+          example: clip
+          type: string
+        input:
+          items:
+            example: bytes or URL
+            type: string
+          type: array
+      type: object
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-ImageEmbeddingInput-properties-model:
+      example: clip
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-ModelEmbeddingOutput:
+      example:
+        data:
+        - index: 0
+          embedding:
+          - 0.1
+          - 0.2
+          - 0.3
+          object: embedding
+        - index: 1
+          embedding:
+          - 0.3
+          - 0.2
+          - 0.1
+          object: embedding
+        usage:
+          total_tokens: 15
+          prompt_tokens: 15
+      properties:
+        data:
+          items:
+            properties:
+              index:
+                example: 0
+                type: number
+              embedding:
+                items:
+                  example: 0.1
+                  type: number
+                type: array
+              object:
+                example: embedding
+                type: string
+            type: object
+          type: array
+        usage:
+          properties:
+            total_tokens:
+              example: 15
+              type: number
+            prompt_tokens:
+              example: 15
+              type: number
+          type: object
+      type: object
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-ModelEmbeddingOutput-properties-object:
+      example: list
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-RankingOutput:
+      example:
+        results:
+        - index: 0
+          document:
+            text: Document to rank 1
+          relevance_score: 0.9
+        - index: 1
+          document:
+            text: Document to rank 2
+          relevance_score: 0.8
+        usage:
+          total_tokens: 15
+          prompt_tokens: 15
+      properties:
+        results:
+          items:
+            properties:
+              index:
+                example: 0
+                type: number
+              document:
+                properties:
+                  text:
+                    example: Document to rank 1
+                    type: string
+                type: object
+              relevance_score:
+                example: 0.9
+                type: number
+            type: object
+          type: array
+        usage:
+          properties:
+            total_tokens:
+              example: 15
+              type: number
+            prompt_tokens:
+              example: 15
+              type: number
+          type: object
+      type: object
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-TextRankInput:
+      example:
+        model: jina-reranker-v1-base-en
+        query: Search query
+        documents:
+        - Document to rank 1
+        - Document to rank 2
+      properties:
+        model:
+          example: jina-reranker-v1-base-en
+          type: string
+        query:
+          example: Search query
+          type: string
+        documents:
+          items:
+            example: Document to rank 1
+            type: string
+          type: array
+      type: object
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-TextRankInput-properties-model:
+      example: jina-reranker-v1-base-en
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-TextRankInput-properties-return_documents:
+      example: true
+      type: boolean
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-api_schemas__embedding__TextDoc-properties-id:
+      example: c801ec96945569130923f081d9dd5e8e
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-api_schemas__embedding__TextEmbeddingInput:
+      example:
+        model: jina-embeddings-v2-base-en
+        input:
+        - "Hello, world!"
+      properties:
+        model:
+          example: jina-embeddings-v2-base-en
+          type: string
+        input:
+          items:
+            example: "Hello, world!"
+            type: string
+          type: array
+      type: object
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-api_schemas__embedding__TextEmbeddingInput-properties-model:
+      example: jina-embeddings-v2-base-en
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-api_schemas__embedding__Usage-properties-total_tokens:
+      example: 15
+      type: number
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-api_schemas__embedding__Usage-properties-prompt_tokens:
+      example: 15
+      type: number
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-api_schemas__multi_embeddings__TextEmbeddingInput:
+      example:
+        model: jina-colbert-v1-en
+        input:
+        - "Hello, world!"
+      properties:
+        model:
+          example: jina-colbert-v1-en
+          type: string
+        input:
+          items:
+            example: "Hello, world!"
+            type: string
+          type: array
+      type: object
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-api_schemas__multi_embeddings__TextEmbeddingInput-properties-model:
+      example: jina-colbert-v1-en
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-api_schemas__multi_embeddings__TextEmbeddingInput-properties-input_type:
+      example: document
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-api_schemas__rank__TextDoc-properties-id:
+      example: c801ec96945569130923f081d9dd5e8e
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-api_schemas__rank__Usage:
+      example:
+        total_tokens: 15
+        prompt_tokens: 15
+      properties:
+        total_tokens:
+          example: 15
+          type: number
+        prompt_tokens:
+          example: 15
+          type: number
+      type: object
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-api_schemas__rank__Usage-properties-total_tokens:
+      example: 15
+      type: number
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-api_schemas__rank__Usage-properties-prompt_tokens:
+      example: 15
+      type: number
+      x-do-not-generate: true
+    konfig-generated-schema-single-parameter-schema-post--v1-embeddings:
+      properties:
+        model:
+          description: "The identifier of the model.\n\nAvailable models and corresponding\
+            \ param size and dimension:\n- `jina-embedding-t-en-v1`,\t14m,\t312\n\
+            - `jina-embedding-s-en-v1`,\t35m,\t512 (default)\n- `jina-embedding-b-en-v1`,\t\
+            110m,\t768\n- `jina-embedding-l-en-v1`,\t330,\t1024\n\nFor more information,\
+            \ please checkout our [technical blog](https://arxiv.org/abs/2307.11224).\n"
+          example: jina-embeddings-v2-base-en
+          title: Model
+          type: string
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-api_schemas__embedding__TextEmbeddingInput-properties-model
+        input: {}
+        encoding_format:
+          description: The format in which you want the embeddings to be returned.Possible
+            value are `float` and `base64`. Defaults to `float`
+          enum:
+          - float
+          - base64
+          title: Encoding Format
+          type: string
+      required:
+      - input
+      - model
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter: []
+    konfig-generated-schema-single-parameter-schema-post--v1-bulk-embeddings:
+      properties:
+        file:
+          format: binary
+          title: File
+          type: string
+        email:
+          format: email
+          title: Email
+          type: string
+        model:
+          title: Model
+          type: string
+      required:
+      - file
+      - model
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter: []
+    konfig-generated-schema-single-parameter-schema-get--v1-bulk-embeddings-job_id:
+      properties:
+        job_id:
+          title: Job Id
+          type: string
+      required:
+      - job_id
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - job_id
+    konfig-generated-schema-single-parameter-schema-post--v1-bulk-embeddings-job_id-download-result:
+      properties:
+        job_id:
+          title: Job Id
+          type: string
+      required:
+      - job_id
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - job_id
+    konfig-generated-schema-single-parameter-schema-post--v1-rerank:
+      properties:
+        model:
+          description: "The identifier of the model.\n\nAvailable models and corresponding\
+            \ param size and dimension:\n- `jina-embedding-t-en-v1`,\t14m,\t312\n\
+            - `jina-embedding-s-en-v1`,\t35m,\t512 (default)\n- `jina-embedding-b-en-v1`,\t\
+            110m,\t768\n- `jina-embedding-l-en-v1`,\t330,\t1024\n\nFor more information,\
+            \ please checkout our [technical blog](https://arxiv.org/abs/2307.11224).\n"
+          example: jina-reranker-v1-base-en
+          title: Model
+          type: string
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-TextRankInput-properties-model
+        query: {}
+        documents:
+          items: {}
+          type: array
+        top_n:
+          description: "The number of most relevant documents or indices to return,\
+            \ defaults to the length of `documents`"
+          title: Top N
+          type: integer
+        return_documents:
+          default: true
+          description: "If false, returns results without the doc text - the api will\
+            \ return a list of {index, relevance score} where index is inferred from\
+            \ the list passed into the request. If true, returns results with the\
+            \ doc text passed in - the api will return an ordered list of {index,\
+            \ text, relevance score} where index + text refers to the list passed\
+            \ into the request. Defaults to true"
+          example: true
+          title: Return Documents
+          type: boolean
+          x-konfig-original-example: true
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-TextRankInput-properties-return_documents
+      required:
+      - documents
+      - model
+      - query
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter: []
+    konfig-generated-schema-single-parameter-schema-post--v1-multi-embeddings:
+      properties:
+        model:
+          description: "The identifier of the model.\n\nAvailable models and corresponding\
+            \ param size and dimension:\n- `jina-embedding-t-en-v1`,\t14m,\t312\n\
+            - `jina-embedding-s-en-v1`,\t35m,\t512 (default)\n- `jina-embedding-b-en-v1`,\t\
+            110m,\t768\n- `jina-embedding-l-en-v1`,\t330,\t1024\n\nFor more information,\
+            \ please checkout our [technical blog](https://arxiv.org/abs/2307.11224).\n"
+          example: jina-colbert-v1-en
+          title: Model
+          type: string
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-api_schemas__multi_embeddings__TextEmbeddingInput-properties-model
+        input: {}
+        input_type:
+          default: document
+          description: "Type of the embedding to compute, query or document"
+          enum:
+          - query
+          - document
+          example: document
+          title: Input Type
+          type: string
+          x-konfig-original-example: document
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-api_schemas__multi_embeddings__TextEmbeddingInput-properties-input_type
+        encoding_format:
+          description: The format in which you want the embeddings to be returned.Possible
+            value are `float` and `base64`. Defaults to `float`
+          enum:
+          - float
+          - base64
+          title: Encoding Format
+          type: string
+      required:
+      - input
+      - model
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter: []
+    konfig-generated-schema-single-parameter-schema-get--:
+      properties: {}
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter: []
+    TIEmbeddingInput:
+      description: The input to the API for text embedding. OpenAI compatible
+      example:
+        model: jina-embeddings-v2-base-en
+        input:
+        - "Hello, world!"
+      properties:
+        model:
+          description: "The identifier of the model.\n\nAvailable models and corresponding\
+            \ param size and dimension:\n- `jina-embedding-t-en-v1`,\t14m,\t312\n\
+            - `jina-embedding-s-en-v1`,\t35m,\t512 (default)\n- `jina-embedding-b-en-v1`,\t\
+            110m,\t768\n- `jina-embedding-l-en-v1`,\t330,\t1024\n\nFor more information,\
+            \ please checkout our [technical blog](https://arxiv.org/abs/2307.11224).\n"
+          example: jina-embeddings-v2-base-en
+          title: Model
+          type: string
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-api_schemas__embedding__TextEmbeddingInput-properties-model
+        input: {}
+        encoding_format:
+          description: The format in which you want the embeddings to be returned.Possible
+            value are `float` and `base64`. Defaults to `float`
+          enum:
+          - float
+          - base64
+          title: Encoding Format
+          type: string
+      required:
+      - input
+      - model
+      title: TextEmbeddingInput
+      type: object
+      x-konfig-original-example:
+        model: jina-embeddings-v2-base-en
+        input:
+        - "Hello, world!"
+      x-konfig-generated-schema: konfig-generated-schema-components-schemas-api_schemas__embedding__TextEmbeddingInput
+  securitySchemes:
+    HTTPBearer:
+      scheme: bearer
+      type: http
+      x-konfig-globally-required-security: false
+
